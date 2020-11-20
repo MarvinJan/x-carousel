@@ -294,6 +294,12 @@ class xCarousel {
       });
     }
 
+    if(!!this.autoSlide) {
+      document.addEventListener('visibilitychange', () => {
+        document.visibilityState === 'hidden' ? this.stopAutoSlide(false) : this.autoSlideInit();
+      });
+    }
+
     this.elementToMount.appendChild(scene);
 
     this.changeCarousel();
@@ -355,15 +361,14 @@ class xCarousel {
   }
 
   autoSlideInit() {
-    if(
-        this.autoSlide && 
-        typeof this.autoSlide === 'number' && 
-        this.autoSlide > 0
-      ) {
-        this.autoSlideInterval = setInterval(
-          this.moveRight.bind(this), this.autoSlide
-        )
-    }
+    const autoSlideAllowed = this.autoSlide
+					&& typeof this.autoSlide === 'number'
+					&& this.autoSlide > 0
+          && window.innerWidth > 500;
+
+			return autoSlideAllowed ?
+					this.autoSlideInterval = setInterval(this.moveRight.bind(this), this.autoSlide) :
+					undefined;
   }
 
   get actualIndex() {
